@@ -44,7 +44,7 @@ Contributions to this project are welcomed! You can contribute by:
 
 ### 📞 Contact
 
-For any queries or support, please contact me at [My-Mail](harshag3106@gmail.com)
+For any queries or support, please contact me at [My-Mail](mailto:harshag3106@gmail.com)
 
 ### 📜 License
 This project is licensed under the MIT License. See the LICENSE file for more details.
