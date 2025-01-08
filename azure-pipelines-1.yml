@@ -1,0 +1,45 @@
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'ed7a3496-029e-4a0f-99ab-53fb3c14a71b'
+  imageRepository: 'divakardubeysoftfixtetrisgameapp'
+  containerRegistry: 'quickinfra.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+
+    - task: AzureWebAppContainer@1
+      displayName: Deploy container to Azure Web App
+      inputs:
+        azureSubscription: 'Pay-As-You-Go(1)(2985d122-09da-4675-a4d8-4fcf15089acd)'
+        appName: 'quickwebapp'
+        deployToSlotOrASE: true
+        resourceGroupName: 'quick-infra'
+        slotName: 'production'
+        containers: '$(containerRegistry)/$(imageRepository):$(tag)'
